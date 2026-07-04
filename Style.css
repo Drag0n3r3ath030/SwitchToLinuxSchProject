@@ -1,24 +1,24 @@
 /* background color and font */
 body {
-  .bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover; /* Ensures the video covers the whole screen */
-      z-index: -1; /* Pushes the video behind all content */
-  }
-
   font-family: Arial, sans-serif;
 }
 
+.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover; /* Ensures the video covers the whole screen */
+  z-index: -1; /* Pushes the video behind all content */
+}
+
 p, h1, h2, h3 {
-    background-color: rgb(56, 56, 56, 0.97); /* Semi-transparent black */
-    padding: 15px; /* Adds spacing inside the box */
-    border-radius: 15px; /* Curves the corners */
-    color: white; /* Ensures the text stays readable */
-    width: fit-content; /* Shrinks box to fit text */
+  background-color: rgb(56, 56, 56, 0.97); /* Semi-transparent black */
+  padding: 15px; /* Adds spacing inside the box */
+  border-radius: 15px; /* Curves the corners */
+  color: white; /* Ensures the text stays readable */
+  width: fit-content; /* Shrinks box to fit text */
 }
 
 ul, ol, a {
@@ -31,61 +31,32 @@ ul, ol, a {
 li {
   color: white; /* Keeps list text readable */
   padding: 5px 0; /* Adds space between list items */
+  list-style-type: decimal; /* numbers appear */
 }
 
 h1 {
-    text-align: center; /* Centers text inside the box */
-    display: block; /* normal block behavior */
-    background-color: rgb(56, 56, 56, 0.97); /* Semi-transparent dark overlay */
-    padding: 15px; /* space inside the box */
-    border-radius: 15px; /* Curved corners */
-    color: white; /* readability */
-    width: fit-content; /* Prevents stretching */
-    margin: 20px auto; /* Centers just the box */
-    z-index: 2; /* Keeps it above the video */
-    font-weight: bold;
-    text-decoration: underline;
+  text-align: center; /* Centers text inside the box */
+  display: block; /* normal block behavior */
+  margin: 20px auto; /* Centers just the box */
+  z-index: 2; /* Keeps it above the video */
+  font-weight: bold;
+  text-decoration: underline;
 }
-
 
 /* subheadings */
 h2 {
   font-weight: bold;
-  color: #ffffff;
 }
 
 /* paragraphs */
 p {
   font-size: 18px;
-  color: #ffffff;
 }
 
 /* ordered lists */
 ol {
   padding-left: 20px;
   font-size: 16px;
-}
-
-/* list items */
-li {
-  list-style-type: decimal; /* numbers appear */
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: auto 1fr; /*left*/
-  gap: 30px; /*yellow*/
-}
-
-.fun-fact {
-  background-color: #ffcc00;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid #333;
-  width: fit-content;
-  align-self: center; /* aligned properly */
 }
 
 .container {
@@ -95,21 +66,20 @@ li {
 }
 
 .image img {
-  width: 400px; 
-  height: auto; 
+  width: 400px;
+  height: auto;
 }
 
 .scroll-first {
-  background-color: #4caf50; 
+  background-color: #4caf50;
   padding: 10px;
   border-radius: 5px;
   font-size: 14px;
   font-weight: bold;
   border: 2px solid #333;
-  width: fit-content; 
-  text-align: center; 
+  width: fit-content;
+  text-align: center;
 }
-
 
 .boxes {
   display: flex;
@@ -125,16 +95,7 @@ li {
   font-weight: bold;
   border: 2px solid #333;
   width: fit-content;
-}
-
-.extra-box {
-  background-color: #4caf50; /* Green background */
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid #333;
-  width: fit-content;
+  align-self: center; /* aligned properly */
 }
 
 .extra-box {
@@ -154,20 +115,6 @@ li {
   margin-top: 10px; /* space between box & arrow */
 }
 
-
-.corner-badge {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 9999;
-  background-color: #24292e;
-  padding: 6px 10px;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
-}
-.corner-badge img {
-  vertical-align: middle;
-}
 .status-stack {
   position: fixed;
   bottom: 10px;
@@ -176,29 +123,33 @@ li {
   z-index: 9999;
 }
 
+.corner-badge {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 9999;
+  display: inline-block;
+  background-color: #24292e;
+  padding: 6px 10px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.corner-badge img {
+  vertical-align: middle;
+}
+
 #deploy-time {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
   font-size: 0.7em;
   color: #888;
   background-color: #fff;
   padding: 2px 6px;
   border-radius: 4px 4px 0 0;
   font-style: italic;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-}
-
-.corner-badge {
-  display: inline-block;
-  background-color: #24292e;
-  padding: 6px 10px;
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.corner-badge img {
-  vertical-align: middle;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .star-wrapper {
