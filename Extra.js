@@ -10,6 +10,7 @@ console.log(`
 \\___)=(___/
 `);
 console.log("Welcome to the Terminal Underground! 🐧");
+
 let devtoolsOpen = false;
 setInterval(() => {
   const widthThreshold = window.outerWidth - window.innerWidth > 100;
@@ -22,13 +23,13 @@ setInterval(() => {
   }
 }, 500);
 
-fetch('https://api.github.com/repos/Drag0n3r3ath030/SwitchToLinuxSchProject/actions/workflows/pages-build-deployment.yml/runs?per_page=1&status=success')
+fetch('https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject/actions/workflows/pages-build-deployment.yml/runs?per_page=1&status=success')
   .then(res => res.json())
   .then(data => {
     const run = data.workflow_runs?.[0];
     const timestamp = run ? new Date(run.updated_at) : null;
-    document.getElementById('deploy-time').textContent = 
-      timestamp 
+    document.getElementById('deploy-time').textContent =
+      timestamp
         ? `Last deployed: ${timestamp.toLocaleString()}`
         : 'Last deployed: not available';
   })
