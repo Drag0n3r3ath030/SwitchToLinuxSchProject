@@ -23,7 +23,7 @@ setInterval(() => {
   }
 }, 500);
 
-fetch('https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject/actions/workflows/pages-build-deployment.yml/runs?per_page=1&status=success')
+fetch('https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject/actions/workflows/pages%2Fpages-build-deployment/runs?per_page=1&status=success')
   .then(res => res.json())
   .then(data => {
     const run = data.workflow_runs?.[0];
