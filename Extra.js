@@ -66,33 +66,77 @@ async function fetchLastDeployTime() {
     }
   }
 
+  const owner = "Pizzafliper030";
+  const repo = "SwitchToLinuxSchProject";
+  const apiHeaders = {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
 
   try {
-    const res = await fetch(
-      "https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject/actions/workflows/pages%2Fpages-build-deployment/runs?per_page=1&status=success",
-      {
-        signal: controller.signal,
-        headers: {
-          "Accept": "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28"
-        }
+    // The Pages deploy workflow isn't a file you committed — it's generated
+    // by GitHub — so its API path has to be looked up by name rather than
+    // guessed. Cache the resolved workflow ID separately (it never changes)
+    // to avoid this extra call on every visit.
+    let workflowId = sessionStorage.getItem("pagesWorkflowId");
+
+    if (!workflowId) {
+      const workflowsRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/actions/workflows`,
+        { signal: controller.signal, headers: apiHeaders }
+      );
+
+      if (workflowsRes.status === 403) {
+        throw new Error("rate-limited");
       }
+      if (!workflowsRes.ok) {
+        throw new Error(`workflows lookup failed (${workflowsRes.status})`);
+      }
+
+      const workflowsData = await workflowsRes.json();
+      const pagesWorkflow = workflowsData.workflows?.find(w =>
+        /pages.?build.?and.?deployment/i.test(w.name) ||
+        /pages-build-deployment/i.test(w.path)
+      );
+
+      if (!pagesWorkflow) {
+        throw new Error("no Pages workflow found on this repo yet");
+      }
+
+      workflowId = pagesWorkflow.id;
+      sessionStorage.setItem("pagesWorkflowId", workflowId);
+    }
+
+    const runsRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=1&status=success`,
+      { signal: controller.signal, headers: apiHeaders }
     );
 
-    if (!res.ok) throw new Error(`GitHub API responded with ${res.status}`);
+    if (runsRes.status === 403) {
+      throw new Error("rate-limited");
+    }
+    if (!runsRes.ok) {
+      throw new Error(`runs lookup failed (${runsRes.status})`);
+    }
 
-    const data = await res.json();
-    const run = data.workflow_runs?.[0];
+    const runsData = await runsRes.json();
+    const run = runsData.workflow_runs?.[0];
     const text = run ? formatDeployText(run.updated_at) : "🕒 Last deployed: not available";
 
     el.textContent = text;
     sessionStorage.setItem(DEPLOY_CACHE_KEY, JSON.stringify({ text, savedAt: Date.now() }));
   } catch (err) {
-    el.textContent = err.name === "AbortError"
-      ? "🕒 Last deployed: timed out"
-      : "🕒 Last deployed: error";
+    if (err.name === "AbortError") {
+      el.textContent = "🕒 Last deployed: timed out";
+    } else if (err.message === "rate-limited") {
+      el.textContent = "🕒 Last deployed: rate-limited, try later";
+    } else {
+      console.warn("Deploy-time fetch failed:", err.message);
+      el.textContent = "🕒 Last deployed: unavailable";
+    }
   } finally {
     clearTimeout(timeout);
   }
