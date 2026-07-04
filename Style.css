@@ -119,20 +119,20 @@ ol {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  text-align: center;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
 }
 
 .corner-badge {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 9999;
-  display: inline-block;
+  display: block;
   background-color: #24292e;
   padding: 6px 10px;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .corner-badge img {
@@ -140,9 +140,6 @@ ol {
 }
 
 #deploy-time {
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
   font-size: 0.7em;
   color: #888;
   background-color: #fff;
@@ -150,6 +147,7 @@ ol {
   border-radius: 4px 4px 0 0;
   font-style: italic;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .star-wrapper {
