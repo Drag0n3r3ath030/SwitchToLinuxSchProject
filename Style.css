@@ -1,6 +1,7 @@
 /* background color and font */
 body {
   font-family: Arial, sans-serif;
+  line-height: 1.5;
 }
 
 .bg-video {
@@ -14,18 +15,30 @@ body {
 }
 
 p, h1, h2, h3 {
-  background-color: rgb(56, 56, 56, 0.97); /* Semi-transparent black */
+  background-color: rgba(56, 56, 56, 0.97); /* Semi-transparent black */
   padding: 15px; /* Adds spacing inside the box */
   border-radius: 15px; /* Curves the corners */
   color: white; /* Ensures the text stays readable */
   width: fit-content; /* Shrinks box to fit text */
+  max-width: 100%; /* Don't overflow narrow screens */
 }
 
 ul, ol, a {
-  background-color: rgb(56, 56, 56, 0.97); /* Dark semi-transparent box */
+  background-color: rgba(56, 56, 56, 0.97); /* Dark semi-transparent box */
   padding: 15px; /* Adds spacing inside */
   border-radius: 15px; /* Curves corners */
   width: fit-content; /* Shrinks box to fit content */
+  max-width: 100%;
+}
+
+a {
+  color: #7fd1ff;
+  text-decoration: underline;
+}
+
+a:hover,
+a:focus-visible {
+  color: #b3e6ff;
 }
 
 li {
@@ -62,12 +75,15 @@ ol {
 .container {
   display: flex; /* image & box side by side */
   align-items: center; /* vertical alignment */
+  flex-wrap: wrap; /* stack gracefully on small screens */
   gap: 20px; /* space between image & box */
 }
 
 .image img {
+  max-width: 100%;
   width: 400px;
   height: auto;
+  border-radius: 10px;
 }
 
 .scroll-first {
@@ -95,6 +111,7 @@ ol {
   font-weight: bold;
   border: 2px solid #333;
   width: fit-content;
+  max-width: 100%;
   align-self: center; /* aligned properly */
 }
 
@@ -106,13 +123,26 @@ ol {
   font-weight: bold;
   border: 2px solid #333;
   width: fit-content;
+  max-width: 100%;
   position: relative; /* arrow positioning */
 }
 
 .big-arrow {
-  font-size: 80px; /* arrow bigger */
+  font-size: 60px; /* readable without dominating the box */
   text-align: center; /* Centers arrow */
   margin-top: 10px; /* space between box & arrow */
+  animation: bob 1.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big-arrow {
+    animation: none;
+  }
 }
 
 .status-stack {
@@ -165,5 +195,15 @@ ol {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  p, h1, h2, h3, ul, ol, a {
+    width: auto;
+  }
+
+  .status-stack {
+    font-size: 0.9em;
   }
 }
