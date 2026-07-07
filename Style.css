@@ -1,6 +1,6 @@
 /* background color and font */
 :root {
-  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1); 
+  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
@@ -22,19 +22,18 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  object-fit: cover; 
-  background-color: #0d0d0d; 
+  object-fit: cover;
+  background-color: #0d0d0d;
 }
 
+/* Content layer */
 .page-content {
   position: relative;
   z-index: 1;
 }
 
 p, h1, h2, h3 {
-  background-color: rgba(30, 30, 30, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background-color: rgba(20, 20, 20, 0.85);
   padding: 16px 20px;
   margin: 14px 0;
   border-radius: 12px;
@@ -43,11 +42,10 @@ p, h1, h2, h3 {
   color: white;
   width: fit-content;
   max-width: 100%;
+}
 
 ul, ol, a {
-  background-color: rgba(30, 30, 30, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background-color: rgba(20, 20, 20, 0.85);
   padding: 16px 20px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -256,9 +254,7 @@ ol {
   }
 }
 
-/* Scroll-reveal: this class is only ever added by JS (see Extra.js), so if
-   JS fails to load or is disabled, content stays at its normal full opacity
-   instead of being permanently hidden. */
+/* Scroll reveal */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
