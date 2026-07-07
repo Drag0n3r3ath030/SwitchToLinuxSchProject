@@ -5,12 +5,15 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #0d0d0d;
+  color-scheme: dark;
 }
 
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
   padding: 0 16px;
+  background-color: #0d0d0d;
 }
 
 .bg-video {
@@ -21,6 +24,7 @@ body {
   height: 100vh;
   object-fit: cover; /* Ensures the video covers the whole screen */
   z-index: -1; /* Pushes the video behind all content */
+  background-color: #0d0d0d; /* Shows instead of a white flash before the video/poster loads */
 }
 
 p, h1, h2, h3 {
@@ -61,8 +65,14 @@ a:focus-visible {
 
 li {
   color: white; /* Keeps list text readable */
-  padding: 6px 4px; /* Adds space between list items */
+  padding: 6px 8px; /* Adds space between list items */
+  border-radius: 6px;
   list-style-type: decimal; /* numbers appear */
+  transition: background-color 0.2s var(--smooth-ease);
+}
+
+li:hover {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 hr {
@@ -79,6 +89,7 @@ h1 {
   z-index: 2; /* Keeps it above the video */
   font-weight: bold;
   letter-spacing: 0.5px;
+  font-size: clamp(22px, 3vw + 12px, 36px);
 }
 
 /* subheadings */
@@ -89,7 +100,7 @@ h2 {
 
 /* paragraphs */
 p {
-  font-size: 18px;
+  font-size: clamp(15px, 1.1vw + 12px, 18px);
 }
 
 /* ordered lists */
@@ -232,6 +243,20 @@ ol {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* Scroll-reveal: this class is only ever added by JS (see Extra.js), so if
+   JS fails to load or is disabled, content stays at its normal full opacity
+   instead of being permanently hidden. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--smooth-ease), transform 0.7s var(--smooth-ease);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
 @media (max-width: 600px) {
