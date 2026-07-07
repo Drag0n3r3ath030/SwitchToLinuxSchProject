@@ -33,6 +33,61 @@ if (bgVideo && prefersReducedMotion.matches) {
   bgVideo.removeAttribute("autoplay");
 }
 
+// Inertia scroll: instead of jumping straight to the native wheel-delta
+// position, we ease toward a "target" scroll position every animation
+// frame. This is the scroll equivalent of frame interpolation — it doesn't
+// raise your actual refresh rate, it just removes the abrupt per-wheel-tick
+// jumps so motion reads as smoother at the same 60Hz.
+//
+// Deliberately scoped to fine-pointer devices only (mouse/trackpad wheel).
+// Touch scrolling already has its own OS-level momentum and re-hijacking it
+// tends to feel worse, not better. Keyboard scrolling (Space, Page Down,
+// arrow keys) is untouched since we only listen for "wheel" events.
+(function setupInertiaScroll() {
+  if (prefersReducedMotion.matches) return;
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
+  let currentY = window.scrollY;
+  let targetY = window.scrollY;
+  let rafId = null;
+  const EASE = 0.12; // lower = smoother/laggier catch-up, higher = snappier
+
+  function clampTarget() {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    targetY = Math.min(Math.max(targetY, 0), maxScroll);
+  }
+
+  function tick() {
+    currentY += (targetY - currentY) * EASE;
+
+    if (Math.abs(targetY - currentY) < 0.5) {
+      currentY = targetY;
+      window.scrollTo(0, currentY);
+      rafId = null;
+      return;
+    }
+
+    window.scrollTo(0, currentY);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    targetY += e.deltaY;
+    clampTarget();
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }, { passive: false });
+
+  // If the user scrolls some other way (keyboard, drag-scrollbar), keep
+  // our virtual position in sync so the next wheel tick doesn't jump.
+  window.addEventListener("scroll", () => {
+    if (!rafId) {
+      currentY = window.scrollY;
+      targetY = window.scrollY;
+    }
+  }, { passive: true });
+})();
+
 // Last-deployed status, with a short cache so repeat visits within the
 // same tab session don't re-hit the GitHub API on every page load
 const DEPLOY_CACHE_KEY = "deployTimeCache";
