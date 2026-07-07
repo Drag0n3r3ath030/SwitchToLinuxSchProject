@@ -1,4 +1,12 @@
 /* background color and font */
+:root {
+  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1); /* tuned "premium" easing, feels less mechanical than linear/ease */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
@@ -43,7 +51,7 @@ ul, ol, a {
 a {
   color: #7fd1ff;
   text-decoration: underline;
-  transition: color 0.15s ease;
+  transition: color 0.2s var(--smooth-ease);
 }
 
 a:hover,
@@ -103,7 +111,8 @@ ol {
   height: auto;
   border-radius: 12px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease;
+  transition: transform 0.3s var(--smooth-ease);
+  will-change: transform;
 }
 
 .image img:hover {
