@@ -1,6 +1,6 @@
 /* background color and font */
 :root {
-  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1); /* tuned "premium" easing, feels less mechanical than linear/ease */
+  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1); 
 }
 
 html {
@@ -22,33 +22,36 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  object-fit: cover; /* Ensures the video covers the whole screen */
-  z-index: -1; /* Pushes the video behind all content */
-  background-color: #0d0d0d; /* Shows instead of a white flash before the video/poster loads */
+  object-fit: cover; 
+  background-color: #0d0d0d; 
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
 }
 
 p, h1, h2, h3 {
-  background-color: rgba(30, 30, 30, 0.72); /* Frosted dark glass over the video */
+  background-color: rgba(30, 30, 30, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding: 16px 20px; /* Adds spacing inside the box */
+  padding: 16px 20px;
   margin: 14px 0;
-  border-radius: 12px; /* Curves the corners */
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  color: white; /* Ensures the text stays readable */
-  width: fit-content; /* Shrinks box to fit text */
-  max-width: 100%; /* Don't overflow narrow screens */
-}
+  color: white;
+  width: fit-content;
+  max-width: 100%;
 
 ul, ol, a {
-  background-color: rgba(30, 30, 30, 0.72); /* Frosted dark glass over the video */
+  background-color: rgba(30, 30, 30, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding: 16px 20px; /* Adds spacing inside */
-  border-radius: 12px; /* Curves corners */
+  padding: 16px 20px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  width: fit-content; /* Shrinks box to fit content */
+  width: fit-content;
   max-width: 100%;
 }
 
@@ -64,10 +67,10 @@ a:focus-visible {
 }
 
 li {
-  color: white; /* Keeps list text readable */
-  padding: 6px 8px; /* Adds space between list items */
+  color: white;
+  padding: 6px 8px;
   border-radius: 6px;
-  list-style-type: decimal; /* numbers appear */
+  list-style-type: decimal;
   transition: background-color 0.2s var(--smooth-ease);
 }
 
@@ -83,10 +86,10 @@ hr {
 }
 
 h1 {
-  text-align: center; /* Centers text inside the box */
-  display: block; /* normal block behavior */
-  margin: 20px auto; /* Centers just the box */
-  z-index: 2; /* Keeps it above the video */
+  text-align: center;
+  display: block;
+  margin: 20px auto;
+  z-index: 2;
   font-weight: bold;
   letter-spacing: 0.5px;
   font-size: clamp(22px, 3vw + 12px, 36px);
@@ -110,10 +113,10 @@ ol {
 }
 
 .container {
-  display: flex; /* image & box side by side */
-  align-items: center; /* vertical alignment */
-  flex-wrap: wrap; /* stack gracefully on small screens */
-  gap: 20px; /* space between image & box */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .image img {
@@ -144,8 +147,8 @@ ol {
 
 .boxes {
   display: flex;
-  flex-direction: column; /* boxes vertically */
-  gap: 12px; /* Space between stacked boxes */
+  flex-direction: column;
+  gap: 12px;
 }
 
 .fun-fact {
@@ -157,12 +160,12 @@ ol {
   border: 2px solid #333;
   width: fit-content;
   max-width: 100%;
-  align-self: center; /* aligned properly */
+  align-self: center;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .extra-box {
-  background-color: #4caf50; /* Green background */
+  background-color: #4caf50;
   padding: 10px 16px;
   border-radius: 10px;
   font-size: 14px;
@@ -170,14 +173,14 @@ ol {
   border: 2px solid #333;
   width: fit-content;
   max-width: 100%;
-  position: relative; /* arrow positioning */
+  position: relative;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .big-arrow {
-  font-size: 56px; /* readable without dominating the box */
-  text-align: center; /* Centers arrow */
-  margin-top: 10px; /* space between box & arrow */
+  font-size: 56px;
+  text-align: center;
+  margin-top: 10px;
   animation: bob 1.6s ease-in-out infinite;
 }
 
@@ -230,8 +233,16 @@ ol {
 .star-wrapper {
   animation: fadeInStar 1.5s ease-out forwards;
   opacity: 0;
-  margin-left: 10px;
-  margin-top: 10px;
+  margin: 10px;
+  display: inline-block;
+  background-color: #fff;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.star-wrapper iframe {
+  display: block;
 }
 
 @keyframes fadeInStar {
