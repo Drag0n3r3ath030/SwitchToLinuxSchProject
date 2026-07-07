@@ -6,7 +6,7 @@
   <title>Why You Should Switch To Linux</title>
 
   <link rel="icon" type="image/x-icon" href="pics/scemer.ico">
-  <link rel="stylesheet" href="Style.css?v=5">
+  <link rel="stylesheet" href="Style.css?v=7">
   <link rel="preconnect" href="https://ghbtns.com">
   <link rel="preconnect" href="https://api.github.com">
   <link rel="preconnect" href="https://github.com">
@@ -16,6 +16,12 @@
   <meta property="og:description" content="Why you should switch to Linux — a clean, student-made site.">
   <meta property="og:image" content="https://pizzafliper030.github.io/SwitchToLinuxSchProject/pics/linuxlogo.png">
   <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Why You Should Switch To Linux">
+  <meta name="twitter:description" content="Why you should switch to Linux — a clean, student-made site.">
+  <meta name="twitter:image" content="https://pizzafliper030.github.io/SwitchToLinuxSchProject/pics/linuxlogo.png">
+  <meta name="theme-color" content="#0d0d0d">
+  <meta name="color-scheme" content="dark">
   <meta http-equiv="Cache-Control" content="no-store">
 </head>
 <body>
@@ -32,7 +38,8 @@
       </iframe>
     </div>
 
-    <video autoplay loop muted playsinline preload="metadata" class="bg-video">
+    <video autoplay loop muted playsinline preload="metadata" poster="vids/hecker-poster.jpg" class="bg-video">
+      <source src="vids/hecker.webm" type="video/webm">
       <source src="vids/hecker.mp4" type="video/mp4">
     </video>
 
@@ -62,7 +69,10 @@
 
       <div class="container">
         <div class="image">
-          <img src="pics/linuxlogo.png" alt="Linux logo" width="400" height="200" loading="lazy">
+          <picture>
+            <source srcset="pics/linuxlogo.webp" type="image/webp">
+            <img src="pics/linuxlogo.png" alt="Linux logo" width="400" height="200" loading="lazy">
+          </picture>
           <a href="https://duckduckgo.com/?q=linux+logo&ia=images&iax=images&iai=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F09%2FLinux-Symbol.png">&lt;--- Link for Picture</a>
         </div>
         <div class="scroll-first">
@@ -154,6 +164,6 @@
     </a>
   </div>
 
-  <script src="Extra.js?v=3" defer></script>
+  <script src="Extra.js?v=4" defer></script>
 </body>
 </html>
