@@ -133,11 +133,11 @@ ol {
   border-radius: 12px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s var(--smooth-ease);
-  will-change: transform;
 }
 
 .image img:hover {
   transform: scale(1.02);
+  will-change: transform;
 }
 
 .scroll-first {
@@ -242,6 +242,53 @@ ol {
   opacity: 0;
   margin: 10px;
   display: inline-block;
+}
+
+.star-button {
+  display: inline-flex;
+  align-items: stretch;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.star-btn-main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f6f8fa;
+  color: #24292f;
+  padding: 5px 10px;
+  border: 1px solid #d0d7de;
+  border-right: none;
+}
+
+.star-btn-icon {
+  flex-shrink: 0;
+}
+
+.star-btn-count {
+  display: flex;
+  align-items: center;
+  background-color: #eff2f5;
+  color: #24292f;
+  padding: 5px 10px;
+  border: 1px solid #d0d7de;
+  font-weight: 600;
+}
+
+.star-button:hover .star-btn-main {
+  background-color: #f3f4f6;
 }
 
 @keyframes fadeInStar {
