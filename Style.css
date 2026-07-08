@@ -57,6 +57,12 @@ ul, ol, a {
 }
 
 a {
+  padding: 3px 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+a {
   color: #7fd1ff;
   text-decoration: underline;
   transition: color 0.2s var(--smooth-ease);
