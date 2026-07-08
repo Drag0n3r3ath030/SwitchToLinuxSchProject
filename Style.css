@@ -225,7 +225,7 @@ ol {
   color: #c9d1d9;
   background-color: #24292e;
   padding: 3px 10px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 6px;
   font-style: italic;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
