@@ -33,6 +33,32 @@ if (bgVideo && prefersReducedMotion.matches) {
   bgVideo.removeAttribute("autoplay");
 }
 
+// Scroll reveal: sections fade/slide in as they enter the viewport.
+// The "reveal" class is added here (not in the HTML) on purpose — if JS
+// never runs, sections keep their default full opacity instead of being
+// stuck invisible. Skipped entirely for reduced-motion users.
+(function setupScrollReveal() {
+  if (prefersReducedMotion.matches) return;
+  if (!("IntersectionObserver" in window)) return;
+
+  const targets = document.querySelectorAll("main section, footer");
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  targets.forEach((el) => {
+    el.classList.add("reveal");
+    observer.observe(el);
+  });
+})();
+
 // Inertia scroll: instead of jumping straight to the native wheel-delta
 // position, we ease toward a "target" scroll position every animation
 // frame. This is the scroll equivalent of frame interpolation — it doesn't
@@ -198,3 +224,48 @@ async function fetchLastDeployTime() {
 }
 
 fetchLastDeployTime();
+
+// Star count: replaces the old iframe-based GitHub button. A cross-origin
+// iframe is a whole separate browsing context just to show a number — this
+// gets the same info with one small fetch instead, same caching pattern as
+// the deploy-time check above.
+async function fetchStarCount() {
+  const el = document.getElementById("star-count");
+  if (!el) return;
+
+  const CACHE_KEY = "starCountCache";
+  const CACHE_TTL_MS = 5 * 60 * 1000;
+
+  const cached = sessionStorage.getItem(CACHE_KEY);
+  if (cached) {
+    const { count, savedAt } = JSON.parse(cached);
+    if (Date.now() - savedAt < CACHE_TTL_MS) {
+      el.textContent = count;
+      return;
+    }
+  }
+
+  try {
+    const res = await fetch(
+      "https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject",
+      {
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28"
+        }
+      }
+    );
+
+    if (!res.ok) throw new Error(`GitHub API responded with ${res.status}`);
+
+    const data = await res.json();
+    const count = typeof data.stargazers_count === "number" ? data.stargazers_count : "—";
+
+    el.textContent = count;
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ count, savedAt: Date.now() }));
+  } catch (err) {
+    console.warn("Star count fetch failed:", err.message);
+  }
+}
+
+fetchStarCount();
