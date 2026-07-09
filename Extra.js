@@ -11,6 +11,27 @@ console.log(`
 `);
 console.log("Welcome to the Terminal Underground! 🐧");
 
+const REPO_OWNER = "Pizzafliper030";
+const REPO_NAME = "SwitchToLinuxSchProject";
+const GH_API_HEADERS = {
+  "Accept": "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28"
+};
+
+// Shared sessionStorage cache helper used by both the deploy-time and
+// star-count fetches below, so the same-tab-only, time-limited caching
+// logic only needs to exist once.
+function readCache(key, ttlMs) {
+  const cached = sessionStorage.getItem(key);
+  if (!cached) return null;
+  const { value, savedAt } = JSON.parse(cached);
+  return Date.now() - savedAt < ttlMs ? value : null;
+}
+
+function writeCache(key, value) {
+  sessionStorage.setItem(key, JSON.stringify({ value, savedAt: Date.now() }));
+}
+
 // DevTools easter egg — event-driven instead of polling every 500ms forever
 let devtoolsOpen = false;
 function checkDevTools() {
@@ -114,11 +135,6 @@ if (bgVideo && prefersReducedMotion.matches) {
   }, { passive: true });
 })();
 
-// Last-deployed status, with a short cache so repeat visits within the
-// same tab session don't re-hit the GitHub API on every page load
-const DEPLOY_CACHE_KEY = "deployTimeCache";
-const DEPLOY_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
 function formatDeployText(isoString) {
   const deployedAt = new Date(isoString);
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
@@ -138,21 +154,11 @@ async function fetchLastDeployTime() {
   const el = document.getElementById("deploy-time");
   if (!el) return;
 
-  const cached = sessionStorage.getItem(DEPLOY_CACHE_KEY);
-  if (cached) {
-    const { text, savedAt } = JSON.parse(cached);
-    if (Date.now() - savedAt < DEPLOY_CACHE_TTL_MS) {
-      el.textContent = text;
-      return;
-    }
+  const cachedText = readCache("deployTimeCache", 5 * 60 * 1000);
+  if (cachedText) {
+    el.textContent = cachedText;
+    return;
   }
-
-  const owner = "Pizzafliper030";
-  const repo = "SwitchToLinuxSchProject";
-  const apiHeaders = {
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
-  };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -166,16 +172,12 @@ async function fetchLastDeployTime() {
 
     if (!workflowId) {
       const workflowsRes = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/actions/workflows`,
-        { signal: controller.signal, headers: apiHeaders }
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows`,
+        { signal: controller.signal, headers: GH_API_HEADERS }
       );
 
-      if (workflowsRes.status === 403) {
-        throw new Error("rate-limited");
-      }
-      if (!workflowsRes.ok) {
-        throw new Error(`workflows lookup failed (${workflowsRes.status})`);
-      }
+      if (workflowsRes.status === 403) throw new Error("rate-limited");
+      if (!workflowsRes.ok) throw new Error(`workflows lookup failed (${workflowsRes.status})`);
 
       const workflowsData = await workflowsRes.json();
       const pagesWorkflow = workflowsData.workflows?.find(w =>
@@ -183,32 +185,26 @@ async function fetchLastDeployTime() {
         /pages-build-deployment/i.test(w.path)
       );
 
-      if (!pagesWorkflow) {
-        throw new Error("no Pages workflow found on this repo yet");
-      }
+      if (!pagesWorkflow) throw new Error("no Pages workflow found on this repo yet");
 
       workflowId = pagesWorkflow.id;
       sessionStorage.setItem("pagesWorkflowId", workflowId);
     }
 
     const runsRes = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=1&status=success`,
-      { signal: controller.signal, headers: apiHeaders }
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${workflowId}/runs?per_page=1&status=success`,
+      { signal: controller.signal, headers: GH_API_HEADERS }
     );
 
-    if (runsRes.status === 403) {
-      throw new Error("rate-limited");
-    }
-    if (!runsRes.ok) {
-      throw new Error(`runs lookup failed (${runsRes.status})`);
-    }
+    if (runsRes.status === 403) throw new Error("rate-limited");
+    if (!runsRes.ok) throw new Error(`runs lookup failed (${runsRes.status})`);
 
     const runsData = await runsRes.json();
     const run = runsData.workflow_runs?.[0];
     const text = run ? formatDeployText(run.updated_at) : "🕒 Last deployed: not available";
 
     el.textContent = text;
-    sessionStorage.setItem(DEPLOY_CACHE_KEY, JSON.stringify({ text, savedAt: Date.now() }));
+    writeCache("deployTimeCache", text);
   } catch (err) {
     if (err.name === "AbortError") {
       el.textContent = "🕒 Last deployed: timed out";
@@ -233,27 +229,16 @@ async function fetchStarCount() {
   const el = document.getElementById("star-count");
   if (!el) return;
 
-  const CACHE_KEY = "starCountCache";
-  const CACHE_TTL_MS = 5 * 60 * 1000;
-
-  const cached = sessionStorage.getItem(CACHE_KEY);
-  if (cached) {
-    const { count, savedAt } = JSON.parse(cached);
-    if (Date.now() - savedAt < CACHE_TTL_MS) {
-      el.textContent = count;
-      return;
-    }
+  const cachedCount = readCache("starCountCache", 5 * 60 * 1000);
+  if (cachedCount !== null) {
+    el.textContent = cachedCount;
+    return;
   }
 
   try {
     const res = await fetch(
-      "https://api.github.com/repos/Pizzafliper030/SwitchToLinuxSchProject",
-      {
-        headers: {
-          "Accept": "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28"
-        }
-      }
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,
+      { headers: GH_API_HEADERS }
     );
 
     if (!res.ok) throw new Error(`GitHub API responded with ${res.status}`);
@@ -262,7 +247,7 @@ async function fetchStarCount() {
     const count = typeof data.stargazers_count === "number" ? data.stargazers_count : "—";
 
     el.textContent = count;
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ count, savedAt: Date.now() }));
+    writeCache("starCountCache", count);
   } catch (err) {
     console.warn("Star count fetch failed:", err.message);
   }
