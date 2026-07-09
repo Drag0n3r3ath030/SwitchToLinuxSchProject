@@ -1,18 +1,20 @@
 /* background color and font */
 :root {
   --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --bg-dark: #0d0d0d;
+  --panel-dark: #24292e;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #0d0d0d;
+  background-color: var(--bg-dark);
 }
 
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
   padding: 0 16px;
-  background-color: #0d0d0d;
+  background-color: var(--bg-dark);
 }
 
 .bg-video {
@@ -22,7 +24,7 @@ body {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
-  background-color: #0d0d0d;
+  background-color: var(--bg-dark);
 }
 
 /* Content layer */
@@ -31,38 +33,27 @@ body {
   z-index: 1;
 }
 
-p, h1, h2, h3 {
+p, h1, h2, h3, ul, ol, a {
   background-color: rgba(30, 30, 30, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   padding: 16px 20px;
-  margin: 14px 0;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  color: white;
   width: fit-content;
   max-width: 100%;
 }
 
-ul, ol, a {
-  background-color: rgba(30, 30, 30, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 16px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  width: fit-content;
-  max-width: 100%;
+p, h1, h2, h3 {
+  margin: 14px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  color: white;
 }
 
 a {
   padding: 3px 10px;
   display: inline-block;
   vertical-align: middle;
-}
-
-a {
   color: #7fd1ff;
   text-decoration: underline;
   transition: color 0.2s var(--smooth-ease);
@@ -140,16 +131,20 @@ ol {
   will-change: transform;
 }
 
-.scroll-first {
-  background-color: #4caf50;
+.scroll-first, .fun-fact, .extra-box {
   padding: 10px 16px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: bold;
   border: 2px solid #333;
   width: fit-content;
-  text-align: center;
+  max-width: 100%;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-first {
+  background-color: #4caf50;
+  text-align: center;
 }
 
 .boxes {
@@ -160,28 +155,12 @@ ol {
 
 .fun-fact {
   background-color: #ffcc00;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid #333;
-  width: fit-content;
-  max-width: 100%;
   align-self: center;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .extra-box {
   background-color: #4caf50;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid #333;
-  width: fit-content;
-  max-width: 100%;
   position: relative;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .big-arrow {
@@ -215,7 +194,7 @@ ol {
 
 .corner-badge {
   display: block;
-  background-color: #24292e;
+  background-color: var(--panel-dark);
   padding: 6px 10px;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -229,7 +208,7 @@ ol {
 #deploy-time {
   font-size: 0.7em;
   color: #c9d1d9;
-  background-color: #24292e;
+  background-color: var(--panel-dark);
   padding: 3px 10px;
   border-radius: 6px 6px 0 6px;
   font-style: italic;
