@@ -62,7 +62,7 @@ if (bgVideo && prefersReducedMotion.matches) {
   if (prefersReducedMotion.matches) return;
   if (!("IntersectionObserver" in window)) return;
 
-  const targets = document.querySelectorAll("main section, footer");
+  const targets = document.querySelectorAll("main section, footer, .distro-card");
   if (!targets.length) return;
 
   const observer = new IntersectionObserver((entries) => {
