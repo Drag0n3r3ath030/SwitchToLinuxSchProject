@@ -1,285 +1,396 @@
-console.log("%cHey there, curious explorer! 🐧", "color: green; font-size: 18px; font-weight: bold;");
-console.log("This site is proudly made by a student who loves efficiency, control, and penguins.");
-console.log(`
-   .--.
-  |o_o |
-  |:_/ |
- //   \\ \\
-(|     | )
-/'\\_   _/\\'
-\\___)=(___/
-`);
-console.log("Welcome to the Terminal Underground! 🐧");
-
-const REPO_OWNER = "Pizzafliper030";
-const REPO_NAME = "SwitchToLinuxSchProject";
-const GH_API_HEADERS = {
-  "Accept": "application/vnd.github+json",
-  "X-GitHub-Api-Version": "2022-11-28"
-};
-
-// Shared sessionStorage cache helper used by both the deploy-time and
-// star-count fetches below, so the same-tab-only, time-limited caching
-// logic only needs to exist once.
-function readCache(key, ttlMs) {
-  const cached = sessionStorage.getItem(key);
-  if (!cached) return null;
-  const { value, savedAt } = JSON.parse(cached);
-  return Date.now() - savedAt < ttlMs ? value : null;
+/* background color and font */
+:root {
+  --smooth-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --bg-dark: #0d0d0d;
+  --panel-dark: #24292e;
 }
 
-function writeCache(key, value) {
-  sessionStorage.setItem(key, JSON.stringify({ value, savedAt: Date.now() }));
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-dark);
 }
 
-// DevTools easter egg — event-driven instead of polling every 500ms forever
-let devtoolsOpen = false;
-function checkDevTools() {
-  const widthThreshold = window.outerWidth - window.innerWidth > 100;
-  const heightThreshold = window.outerHeight - window.innerHeight > 100;
-  if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-    console.log("%cSpotted you with DevTools open! 👀", "color: orange; font-size: 16px;");
-    devtoolsOpen = true;
-  }
-}
-window.addEventListener("resize", checkDevTools, { passive: true });
-checkDevTools();
-
-// Respect reduced-motion preference: pause the background video for
-// anyone who's asked their OS/browser to cut down on motion
-const bgVideo = document.querySelector(".bg-video");
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-if (bgVideo && prefersReducedMotion.matches) {
-  bgVideo.pause();
-  bgVideo.removeAttribute("autoplay");
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  padding: 0 16px;
+  background-color: var(--bg-dark);
 }
 
-// Scroll reveal: sections fade/slide in as they enter the viewport.
-// The "reveal" class is added here (not in the HTML) on purpose — if JS
-// never runs, sections keep their default full opacity instead of being
-// stuck invisible. Skipped entirely for reduced-motion users.
-(function setupScrollReveal() {
-  if (prefersReducedMotion.matches) return;
-  if (!("IntersectionObserver" in window)) return;
-
-  const targets = document.querySelectorAll("main section, footer, .distro-card");
-  if (!targets.length) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      entry.target.classList.toggle("is-visible", entry.isIntersecting);
-    });
-  }, { threshold: 0.15 });
-
-  targets.forEach((el) => {
-    el.classList.add("reveal");
-    observer.observe(el);
-  });
-})();
-
-// Inertia scroll: instead of jumping straight to the native wheel-delta
-// position, we ease toward a "target" scroll position every animation
-// frame. This is the scroll equivalent of frame interpolation — it doesn't
-// raise your actual refresh rate, it just removes the abrupt per-wheel-tick
-// jumps so motion reads as smoother at the same 60Hz.
-//
-// Deliberately scoped to fine-pointer devices only (mouse/trackpad wheel).
-// Touch scrolling already has its own OS-level momentum and re-hijacking it
-// tends to feel worse, not better. Keyboard scrolling (Space, Page Down,
-// arrow keys) is untouched since we only listen for "wheel" events.
-(function setupInertiaScroll() {
-  if (prefersReducedMotion.matches) return;
-  if (window.matchMedia("(pointer: coarse)").matches) return;
-
-  let currentY = window.scrollY;
-  let targetY = window.scrollY;
-  let rafId = null;
-  const EASE = 0.2; // lower = smoother/laggier catch-up, higher = snappier
-
-  function clampTarget() {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    targetY = Math.min(Math.max(targetY, 0), maxScroll);
-  }
-
-  function tick() {
-    currentY += (targetY - currentY) * EASE;
-
-    if (Math.abs(targetY - currentY) < 0.5) {
-      currentY = targetY;
-      window.scrollTo(0, currentY);
-      rafId = null;
-      return;
-    }
-
-    window.scrollTo(0, currentY);
-    rafId = requestAnimationFrame(tick);
-  }
-
-  window.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    targetY += e.deltaY;
-    clampTarget();
-    if (!rafId) rafId = requestAnimationFrame(tick);
-  }, { passive: false });
-
-  // If the user scrolls some other way (keyboard, drag-scrollbar), keep
-  // our virtual position in sync so the next wheel tick doesn't jump.
-  window.addEventListener("scroll", () => {
-    if (!rafId) {
-      currentY = window.scrollY;
-      targetY = window.scrollY;
-    }
-  }, { passive: true });
-})();
-
-// Distro fan rotation: rotates the composite logo image based on its own
-// scroll position, not a running scroll total. That's what makes it
-// naturally reverse when scrolling back up — the rotation is always a
-// direct function of "how far through the viewport is this element right
-// now," so decreasing that value spins it back the other way for free.
-(function setupDistroFanRotation() {
-  const el = document.querySelector(".distro-fan-img");
-  if (!el || prefersReducedMotion.matches) return;
-
-  const MAX_DEGREES = 180;
-  let ticking = false;
-
-  function update() {
-    const rect = el.getBoundingClientRect();
-    const viewportH = window.innerHeight;
-    let progress = 1 - (rect.top + rect.height / 2) / (viewportH + rect.height);
-    progress = Math.min(Math.max(progress, 0), 1);
-    // Negative = counter-clockwise as progress increases (scrolling down)
-    el.style.transform = `rotate(${-(progress * MAX_DEGREES)}deg)`;
-    ticking = false;
-  }
-
-  window.addEventListener("scroll", () => {
-    if (!ticking) {
-      requestAnimationFrame(update);
-      ticking = true;
-    }
-  }, { passive: true });
-
-  update();
-})();
-
-function formatDeployText(isoString) {
-  const deployedAt = new Date(isoString);
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  const diffMinutes = Math.round((deployedAt - Date.now()) / 60000);
-
-  const relative =
-    Math.abs(diffMinutes) < 60
-      ? rtf.format(diffMinutes, "minute")
-      : Math.abs(diffMinutes) < 1440
-        ? rtf.format(Math.round(diffMinutes / 60), "hour")
-        : rtf.format(Math.round(diffMinutes / 1440), "day");
-
-  return `🕒 Last deployed: ${deployedAt.toLocaleString()} (${relative})`;
+.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  background-color: var(--bg-dark);
 }
 
-async function fetchLastDeployTime() {
-  const el = document.getElementById("deploy-time");
-  if (!el) return;
-
-  const cachedText = readCache("deployTimeCache", 5 * 60 * 1000);
-  if (cachedText) {
-    el.textContent = cachedText;
-    return;
-  }
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-
-  try {
-    // The Pages deploy workflow isn't a file you committed — it's generated
-    // by GitHub — so its API path has to be looked up by name rather than
-    // guessed. Cache the resolved workflow ID separately (it never changes)
-    // to avoid this extra call on every visit.
-    let workflowId = sessionStorage.getItem("pagesWorkflowId");
-
-    if (!workflowId) {
-      const workflowsRes = await fetch(
-        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows`,
-        { signal: controller.signal, headers: GH_API_HEADERS }
-      );
-
-      if (workflowsRes.status === 403) throw new Error("rate-limited");
-      if (!workflowsRes.ok) throw new Error(`workflows lookup failed (${workflowsRes.status})`);
-
-      const workflowsData = await workflowsRes.json();
-      const pagesWorkflow = workflowsData.workflows?.find(w =>
-        /pages.?build.?and.?deployment/i.test(w.name) ||
-        /pages-build-deployment/i.test(w.path)
-      );
-
-      if (!pagesWorkflow) throw new Error("no Pages workflow found on this repo yet");
-
-      workflowId = pagesWorkflow.id;
-      sessionStorage.setItem("pagesWorkflowId", workflowId);
-    }
-
-    const runsRes = await fetch(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${workflowId}/runs?per_page=1&status=success`,
-      { signal: controller.signal, headers: GH_API_HEADERS }
-    );
-
-    if (runsRes.status === 403) throw new Error("rate-limited");
-    if (!runsRes.ok) throw new Error(`runs lookup failed (${runsRes.status})`);
-
-    const runsData = await runsRes.json();
-    const run = runsData.workflow_runs?.[0];
-    const text = run ? formatDeployText(run.updated_at) : "🕒 Last deployed: not available";
-
-    el.textContent = text;
-    writeCache("deployTimeCache", text);
-  } catch (err) {
-    if (err.name === "AbortError") {
-      el.textContent = "🕒 Last deployed: timed out";
-    } else if (err.message === "rate-limited") {
-      el.textContent = "🕒 Last deployed: rate-limited, try later";
-    } else {
-      console.warn("Deploy-time fetch failed:", err.message);
-      el.textContent = "🕒 Last deployed: unavailable";
-    }
-  } finally {
-    clearTimeout(timeout);
-  }
+/* Content layer */
+.page-content {
+  position: relative;
+  z-index: 1;
 }
 
-fetchLastDeployTime();
+p, h1, h2, h3, ul, ol, a {
+  background-color: rgba(30, 30, 30, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: fit-content;
+  max-width: 100%;
+}
 
-// Star count: replaces the old iframe-based GitHub button. A cross-origin
-// iframe is a whole separate browsing context just to show a number — this
-// gets the same info with one small fetch instead, same caching pattern as
-// the deploy-time check above.
-async function fetchStarCount() {
-  const el = document.getElementById("star-count");
-  if (!el) return;
+p, h1, h2, h3 {
+  margin: 14px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  color: white;
+}
 
-  const cachedCount = readCache("starCountCache", 5 * 60 * 1000);
-  if (cachedCount !== null) {
-    el.textContent = cachedCount;
-    return;
-  }
+a {
+  padding: 3px 10px;
+  display: inline-block;
+  vertical-align: middle;
+  color: #7fd1ff;
+  text-decoration: underline;
+  transition: color 0.2s var(--smooth-ease);
+}
 
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,
-      { headers: GH_API_HEADERS }
-    );
+a:hover,
+a:focus-visible {
+  color: #b3e6ff;
+}
 
-    if (!res.ok) throw new Error(`GitHub API responded with ${res.status}`);
+li {
+  color: white;
+  padding: 6px 8px;
+  border-radius: 6px;
+  list-style-type: decimal;
+  transition: background-color 0.2s var(--smooth-ease);
+}
 
-    const data = await res.json();
-    const count = typeof data.stargazers_count === "number" ? data.stargazers_count : "—";
+li:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
 
-    el.textContent = count;
-    writeCache("starCountCache", count);
-  } catch (err) {
-    console.warn("Star count fetch failed:", err.message);
+hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  max-width: 900px;
+  margin: 28px auto;
+}
+
+h1 {
+  text-align: center;
+  display: block;
+  margin: 20px auto;
+  z-index: 2;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  font-size: clamp(22px, 3vw + 12px, 36px);
+}
+
+/* subheadings */
+h2 {
+  font-weight: bold;
+  border-left: 4px solid #4caf50;
+}
+
+/* paragraphs */
+p {
+  font-size: clamp(15px, 1.1vw + 12px, 18px);
+}
+
+/* ordered lists */
+ol {
+  padding-left: 36px;
+  font-size: 16px;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.distro-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding-left: 0;
+  max-width: 340px;
+}
+
+.distro-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 150px;
+  flex: 1 1 150px;
+  list-style-type: none;
+}
+
+.distro-card strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.distro-card .tagline {
+  font-size: 12px;
+  font-style: italic;
+  color: #9fb3a8;
+}
+
+.distro-card.reveal {
+  transition-duration: 0.5s;
+}
+
+.distro-card:nth-child(1) { transition-delay: 0s; }
+.distro-card:nth-child(2) { transition-delay: 0.05s; }
+.distro-card:nth-child(3) { transition-delay: 0.1s; }
+.distro-card:nth-child(4) { transition-delay: 0.15s; }
+.distro-card:nth-child(5) { transition-delay: 0.2s; }
+.distro-card:nth-child(6) { transition-delay: 0.25s; }
+.distro-card:nth-child(7) { transition-delay: 0.3s; }
+.distro-card:nth-child(8) { transition-delay: 0.35s; }
+.distro-card:nth-child(9) { transition-delay: 0.4s; }
+.distro-card:nth-child(10) { transition-delay: 0.45s; }
+
+.image {
+  position: relative;
+  display: inline-block;
+}
+
+.image img {
+  max-width: 100%;
+  width: 400px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s var(--smooth-ease);
+}
+
+.image img:hover {
+  transform: scale(1.02);
+  will-change: transform;
+}
+
+.image-credit {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  color: #ddd;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: auto;
+  text-decoration: none;
+  transition: background-color 0.2s var(--smooth-ease), color 0.2s var(--smooth-ease);
+}
+
+.image-credit:hover,
+.image-credit:focus-visible {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+}
+
+.scroll-first, .fun-fact, .extra-box {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid #333;
+  width: fit-content;
+  max-width: 100%;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-first {
+  background-color: #4caf50;
+  text-align: center;
+}
+
+.boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fun-fact {
+  background-color: #ffcc00;
+  align-self: center;
+}
+
+.extra-box {
+  background-color: #4caf50;
+  position: relative;
+}
+
+.big-arrow {
+  font-size: 56px;
+  text-align: center;
+  margin-top: 10px;
+  animation: bob 1.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big-arrow {
+    animation: none;
   }
 }
 
-fetchStarCount();
+.distro-fan-wrap {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  flex: 0 0 auto;
+}
+
+.distro-fan-img {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .distro-fan-img {
+    transform: none !important;
+  }
+}
+
+.status-stack {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.corner-badge {
+  display: block;
+  background-color: var(--panel-dark);
+  padding: 6px 10px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.corner-badge img {
+  vertical-align: middle;
+}
+
+#deploy-time {
+  font-size: 0.7em;
+  color: #c9d1d9;
+  background-color: var(--panel-dark);
+  padding: 3px 10px;
+  border-radius: 6px 6px 0 6px;
+  font-style: italic;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.star-wrapper {
+  animation: fadeInStar 1.5s ease-out forwards;
+  opacity: 0;
+  margin: 10px;
+  display: inline-block;
+}
+
+.star-button {
+  display: inline-flex;
+  align-items: stretch;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.star-btn-main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f6f8fa;
+  color: #24292f;
+  padding: 5px 10px;
+  border: 1px solid #d0d7de;
+  border-right: none;
+}
+
+.star-btn-icon {
+  flex-shrink: 0;
+}
+
+.star-btn-count {
+  display: flex;
+  align-items: center;
+  background-color: #eff2f5;
+  color: #24292f;
+  padding: 5px 10px;
+  border: 1px solid #d0d7de;
+  font-weight: 600;
+}
+
+.star-button:hover .star-btn-main {
+  background-color: #f3f4f6;
+}
+
+@keyframes fadeInStar {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--smooth-ease), transform 0.7s var(--smooth-ease);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 600px) {
+  p, h1, h2, h3, ul, ol, a {
+    width: auto;
+  }
+
+  .status-stack {
+    font-size: 0.9em;
+  }
+}
