@@ -144,49 +144,32 @@ if (bgVideo && prefersReducedMotion.matches) {
   // Devices with inertia scroll active (fine-pointer/desktop) get extra
   // spin on top of the base rotation, since the smoothed scroll motion
   // makes a faster spin feel proportionate. Touch devices (no inertia
-  // scroll) keep the standard single 360 rotation.
+  // scroll) keep the standard single rotation.
   const hasInertiaScroll = !window.matchMedia("(pointer: coarse)").matches;
-  const MAX_DEGREES = hasInertiaScroll ? 540 : 360;
-  const EASE = 0.25;
+  const MAX_DEGREES = hasInertiaScroll ? 450 : 300;
+  let ticking = false;
 
-  let targetAngle = 0;
-  let currentAngle = 0;
-  let rafId = null;
-
-  function computeTargetAngle() {
+  // Rotation is bound directly to current scroll position (no easing/lerp
+  // loop chasing a target) so it stops the instant scrolling stops, with
+  // no trailing catch-up motion. requestAnimationFrame here is purely a
+  // performance throttle, not an animation.
+  function update() {
     const rect = el.getBoundingClientRect();
     const viewportH = window.innerHeight;
     let progress = 1 - (rect.top + rect.height / 2) / (viewportH + rect.height);
     progress = Math.min(Math.max(progress, 0), 1);
-    targetAngle = -(progress * MAX_DEGREES);
-  }
-
-  // Eases toward the target each frame instead of using a fixed-duration
-  // CSS transition — that way a big scroll jump still smooths out, but it
-  // settles as soon as it catches up rather than always running for a
-  // fixed time after scrolling has already stopped.
-  function tick() {
-    currentAngle += (targetAngle - currentAngle) * EASE;
-
-    if (Math.abs(targetAngle - currentAngle) < 0.1) {
-      currentAngle = targetAngle;
-      el.style.transform = `rotate(${currentAngle}deg)`;
-      rafId = null;
-      return;
-    }
-
-    el.style.transform = `rotate(${currentAngle}deg)`;
-    rafId = requestAnimationFrame(tick);
+    el.style.transform = `rotate(${-(progress * MAX_DEGREES)}deg)`;
+    ticking = false;
   }
 
   window.addEventListener("scroll", () => {
-    computeTargetAngle();
-    if (!rafId) rafId = requestAnimationFrame(tick);
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
   }, { passive: true });
 
-  computeTargetAngle();
-  currentAngle = targetAngle;
-  el.style.transform = `rotate(${currentAngle}deg)`;
+  update();
 })();
 
 function formatDeployText(isoString) {
