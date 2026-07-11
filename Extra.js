@@ -146,8 +146,12 @@ if (bgVideo && prefersReducedMotion.matches) {
   // makes a faster spin feel proportionate. Touch devices (no inertia
   // scroll) keep the standard single 360 rotation.
   const hasInertiaScroll = !window.matchMedia("(pointer: coarse)").matches;
-  const MAX_DEGREES = hasInertiaScroll ? 720 : 360;
+  const MAX_DEGREES = hasInertiaScroll ? 540 : 360;
   let ticking = false;
+
+  // Short transition so a big scroll jump eases into its new angle
+  // instead of snapping there instantly in a single frame.
+  el.style.transition = "transform 0.15s linear";
 
   function update() {
     const rect = el.getBoundingClientRect();
