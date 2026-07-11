@@ -147,30 +147,46 @@ if (bgVideo && prefersReducedMotion.matches) {
   // scroll) keep the standard single 360 rotation.
   const hasInertiaScroll = !window.matchMedia("(pointer: coarse)").matches;
   const MAX_DEGREES = hasInertiaScroll ? 540 : 360;
-  let ticking = false;
+  const EASE = 0.25;
 
-  // Short transition so a big scroll jump eases into its new angle
-  // instead of snapping there instantly in a single frame.
-  el.style.transition = "transform 0.15s linear";
+  let targetAngle = 0;
+  let currentAngle = 0;
+  let rafId = null;
 
-  function update() {
+  function computeTargetAngle() {
     const rect = el.getBoundingClientRect();
     const viewportH = window.innerHeight;
     let progress = 1 - (rect.top + rect.height / 2) / (viewportH + rect.height);
     progress = Math.min(Math.max(progress, 0), 1);
-    // Negative = counter-clockwise as progress increases (scrolling down)
-    el.style.transform = `rotate(${-(progress * MAX_DEGREES)}deg)`;
-    ticking = false;
+    targetAngle = -(progress * MAX_DEGREES);
+  }
+
+  // Eases toward the target each frame instead of using a fixed-duration
+  // CSS transition — that way a big scroll jump still smooths out, but it
+  // settles as soon as it catches up rather than always running for a
+  // fixed time after scrolling has already stopped.
+  function tick() {
+    currentAngle += (targetAngle - currentAngle) * EASE;
+
+    if (Math.abs(targetAngle - currentAngle) < 0.1) {
+      currentAngle = targetAngle;
+      el.style.transform = `rotate(${currentAngle}deg)`;
+      rafId = null;
+      return;
+    }
+
+    el.style.transform = `rotate(${currentAngle}deg)`;
+    rafId = requestAnimationFrame(tick);
   }
 
   window.addEventListener("scroll", () => {
-    if (!ticking) {
-      requestAnimationFrame(update);
-      ticking = true;
-    }
+    computeTargetAngle();
+    if (!rafId) rafId = requestAnimationFrame(tick);
   }, { passive: true });
 
-  update();
+  computeTargetAngle();
+  currentAngle = targetAngle;
+  el.style.transform = `rotate(${currentAngle}deg)`;
 })();
 
 function formatDeployText(isoString) {
