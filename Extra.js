@@ -94,7 +94,7 @@ if (bgVideo && prefersReducedMotion.matches) {
   let currentY = window.scrollY;
   let targetY = window.scrollY;
   let rafId = null;
-  const EASE = 0.12; // lower = smoother/laggier catch-up, higher = snappier
+  const EASE = 0.2; // lower = smoother/laggier catch-up, higher = snappier
 
   function clampTarget() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
