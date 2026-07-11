@@ -253,6 +253,24 @@ ol {
   }
 }
 
+.distro-fan-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.distro-fan-img {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .distro-fan-img {
+    transform: none !important;
+  }
+}
+
 .status-stack {
   position: fixed;
   bottom: 10px;
