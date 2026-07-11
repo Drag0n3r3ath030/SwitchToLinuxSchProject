@@ -123,7 +123,7 @@ ol {
   gap: 10px;
   list-style: none;
   padding-left: 0;
-  max-width: 340px;
+  max-width: 600px;
 }
 
 .distro-card {
@@ -259,6 +259,7 @@ ol {
   justify-content: center;
   align-self: center;
   flex: 0 0 auto;
+  max-width: 100%;
 }
 
 .distro-fan-img {
