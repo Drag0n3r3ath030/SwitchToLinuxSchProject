@@ -283,6 +283,8 @@ ol {
   flex-direction: column;
   align-items: flex-end;
   gap: 0;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 .corner-badge {
@@ -296,10 +298,12 @@ ol {
 
 .corner-badge img {
   vertical-align: middle;
+  height: 20px;
+  width: auto;
 }
 
 #deploy-time {
-  font-size: 0.7em;
+  font-size: 11px;
   color: #c9d1d9;
   background-color: var(--panel-dark);
   padding: 3px 10px;
@@ -391,7 +395,16 @@ ol {
     width: auto;
   }
 
-  .status-stack {
-    font-size: 0.9em;
+  #deploy-time {
+    font-size: 9px;
+    padding: 2px 7px;
+  }
+
+  .corner-badge {
+    padding: 4px 7px;
+  }
+
+  .corner-badge img {
+    height: 16px;
   }
 }
