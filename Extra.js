@@ -146,8 +146,18 @@ if (bgVideo && prefersReducedMotion.matches) {
   // makes a faster spin feel proportionate. Touch devices (no inertia
   // scroll) keep the standard single rotation.
   const hasInertiaScroll = !window.matchMedia("(pointer: coarse)").matches;
-  const MAX_DEGREES = hasInertiaScroll ? 450 : 300;
+  const MAX_DEGREES = hasInertiaScroll ? 300 : 200;
   let ticking = false;
+
+  // Mobile browsers resize the visible viewport as the address bar
+  // collapses/expands *during* scrolling. Reading window.innerHeight fresh
+  // on every scroll tick picks up that transient change mid-scroll and
+  // throws off the rotation math. Caching it and only refreshing on an
+  // actual resize avoids that.
+  let viewportH = window.innerHeight;
+  window.addEventListener("resize", () => {
+    viewportH = window.innerHeight;
+  }, { passive: true });
 
   // Rotation is bound directly to current scroll position (no easing/lerp
   // loop chasing a target) so it stops the instant scrolling stops, with
@@ -155,7 +165,6 @@ if (bgVideo && prefersReducedMotion.matches) {
   // performance throttle, not an animation.
   function update() {
     const rect = el.getBoundingClientRect();
-    const viewportH = window.innerHeight;
     let progress = 1 - (rect.top + rect.height / 2) / (viewportH + rect.height);
     progress = Math.min(Math.max(progress, 0), 1);
     el.style.transform = `rotate(${-(progress * MAX_DEGREES)}deg)`;
