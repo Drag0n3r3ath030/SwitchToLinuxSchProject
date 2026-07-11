@@ -132,6 +132,38 @@ if (bgVideo && prefersReducedMotion.matches) {
   }, { passive: true });
 })();
 
+// Distro fan rotation: rotates the composite logo image based on its own
+// scroll position, not a running scroll total. That's what makes it
+// naturally reverse when scrolling back up — the rotation is always a
+// direct function of "how far through the viewport is this element right
+// now," so decreasing that value spins it back the other way for free.
+(function setupDistroFanRotation() {
+  const el = document.querySelector(".distro-fan-img");
+  if (!el || prefersReducedMotion.matches) return;
+
+  const MAX_DEGREES = 180;
+  let ticking = false;
+
+  function update() {
+    const rect = el.getBoundingClientRect();
+    const viewportH = window.innerHeight;
+    let progress = 1 - (rect.top + rect.height / 2) / (viewportH + rect.height);
+    progress = Math.min(Math.max(progress, 0), 1);
+    // Negative = counter-clockwise as progress increases (scrolling down)
+    el.style.transform = `rotate(${-(progress * MAX_DEGREES)}deg)`;
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  update();
+})();
+
 function formatDeployText(isoString) {
   const deployedAt = new Date(isoString);
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
