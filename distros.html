@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>What Is Linux? — Why You Should Switch To Linux</title>
+  <title>Distros — Why You Should Switch To Linux</title>
 
   <link rel="icon" type="image/x-icon" href="pics/scemer.ico">
   <link rel="stylesheet" href="Style.css?v=30">
@@ -11,9 +11,9 @@
   <link rel="preconnect" href="https://api.github.com">
   <link rel="preconnect" href="https://github.com">
 
-  <meta name="description" content="What Linux actually is — free, open-source, and used everywhere from phones to supercomputers.">
-  <meta property="og:title" content="What Is Linux?">
-  <meta property="og:description" content="What Linux actually is — free, open-source, and used everywhere from phones to supercomputers.">
+  <meta name="description" content="The 10 Linux distros I'd actually recommend to a beginner, and what makes each one different.">
+  <meta property="og:title" content="Distros">
+  <meta property="og:description" content="The 10 Linux distros I'd actually recommend to a beginner, and what makes each one different.">
   <meta property="og:image" content="https://pizzafliper030.github.io/SwitchToLinuxSchProject/pics/linuxlogo.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0d0d0d">
@@ -48,44 +48,51 @@
 
   <main>
     <section>
-      <h2>What Is Linux?</h2>
-      <p>Linux is a <strong>free and open-source</strong> family of operating systems that is <strong>resilient and
-      flexible</strong>. The system's <strong>source code is accessible to everyone for anyone to look at and change,
-      making it cool that anyone can see how the system works</strong>. People from all across the world are urged to
-      work together and keep developing Linux due to its <strong>openness</strong>.</p>
-
-      <p>Since the beginning, Linux has grown into <strong>dependable and safe</strong> distros that are used in an array of
-      gadgets, including PCs, phones, and huge supercomputers. Linux is cost-effective because it's free and lightweight,
-      helping older machines stay functional longer.</p>
+      <h2>Distros</h2>
+      <p>You might be confused from what I meant by <em>distros</em>...</p>
+      <p>A Linux distribution, often shortened to &ldquo;distro,&rdquo; is a packaged version of Linux that comes with the Linux kernel
+      plus a collection of software and utilities that make the OS functional and user-friendly.</p>
+      <p>Some distros are optimized for business, offering tools for productivity and enterprise management,
+      while others focus on multimedia, bundling advanced audio and video editing software. Distributions
+      for software developers come preloaded with compilers, programming tools, and integrated
+      development environments (IDEs).</p>
+      <p><strong>The 10 most common and used distros are:</strong></p>
 
       <div class="container">
-        <div class="image">
-          <picture>
-            <source srcset="pics/linuxlogo.webp" type="image/webp">
-            <img src="pics/linuxlogo.png" alt="Linux logo" width="400" height="200" loading="lazy">
-          </picture>
-          <a href="https://duckduckgo.com/?q=linux+logo&ia=images&iax=images&iai=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F09%2FLinux-Symbol.png" class="image-credit">Source</a>
+        <ol class="distro-grid">
+          <li class="distro-card"><strong>Linux Mint</strong><span class="tagline">beginner's best friend</span></li>
+          <li class="distro-card"><strong>CachyOS</strong><span class="tagline">built for speed (what I run)</span></li>
+          <li class="distro-card"><strong>OpenSuse Leap</strong><span class="tagline">rock solid & stable</span></li>
+          <li class="distro-card"><strong>Elementary OS</strong><span class="tagline">looks gorgeous</span></li>
+          <li class="distro-card"><strong>Ubuntu</strong><span class="tagline">the household name</span></li>
+          <li class="distro-card"><strong>Fedora OS</strong><span class="tagline">bleeding edge, done right</span></li>
+          <li class="distro-card"><strong>Zorin</strong><span class="tagline">windows refugees start here</span></li>
+          <li class="distro-card"><strong>Debian</strong><span class="tagline">the OG stability king</span></li>
+          <li class="distro-card"><strong>Pop_OS!</strong><span class="tagline">gamer & dev favorite</span></li>
+          <li class="distro-card"><strong>MX Linux</strong><span class="tagline">runs on literally anything</span></li>
+        </ol>
+
+        <div class="distro-fan-wrap">
+          <img src="pics/spinnyspinspin.png" alt="Debian, Ubuntu, Fedora, and Arch Linux logos arranged in a cross" class="distro-fan-img" loading="lazy">
         </div>
-        <a href="distros.html" class="cta-link">
-          <div class="scroll-first">
-            NEXT UP: DISTROS
-            <div class="big-arrow cta-arrow">&#8594;</div>
+
+        <div class="boxes">
+          <div class="fun-fact">
+            &#128161; Tip: If you're <strong>new</strong> to Linux, I recommend using the distros listed here as they have a
+            <strong>huge and active community and can easily help</strong> you out when you're stuck! (small update from me: I swapped Manjaro out of this list — it used to be a common beginner rec, but its update-delay setup on top of being rolling-release has caused enough real problems that I can't recommend it anymore. CachyOS is what I actually run daily now, and it's been solid.)
           </div>
-        </a>
+          <a href="why-switch.html" class="cta-link">
+            <div class="extra-box">
+              NEXT UP: WHY <strong>YOU SHOULD SWITCH TO LINUX</strong>
+              <div class="big-arrow cta-arrow">&#8594;</div>
+            </div>
+          </a>
+        </div>
       </div>
     </section>
   </main>
 
   <hr>
-
-  <footer>
-    <ol>
-      <li>Font used: <a href="https://fonts.google.com/specimen/Roboto?preview.text=Hi">Roboto</a></li>
-      <li>Code editor: <a href="https://replit.com">Replit</a></li>
-      <li>Help taken from: <a href="https://copilot.microsoft.com/">Copilot</a> used in 2025;
-        <a href="https://claude.ai/new">Claude Sonnet 5</a> used onwards after 2026 start</li>
-    </ol>
-  </footer>
 
   <div class="status-stack">
     <div id="deploy-time">&#128337; Last deployed: loading...</div>
