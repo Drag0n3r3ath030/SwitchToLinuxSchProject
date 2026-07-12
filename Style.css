@@ -390,6 +390,90 @@ ol {
   transform: none;
 }
 
+/* Hub navigation */
+.hub-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.hub-card {
+  display: block;
+  background-color: rgba(30, 30, 30, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  padding: 18px 22px;
+  width: fit-content;
+  max-width: 100%;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s var(--smooth-ease), background-color 0.2s var(--smooth-ease);
+}
+
+.hub-card:hover,
+.hub-card:focus-visible {
+  transform: translateY(-3px);
+  background-color: rgba(40, 40, 40, 0.8);
+  color: white;
+}
+
+.hub-card h3 {
+  margin: 0 0 6px 0;
+  color: white;
+}
+
+.hub-card-desc {
+  margin: 0;
+  font-size: 14px;
+  color: #9fb3a8;
+}
+
+/* Diagonal placement: top-left down to bottom-right */
+.hub-links .hub-card:nth-child(1) { align-self: flex-start; }
+.hub-links .hub-card:nth-child(2) { align-self: center; }
+.hub-links .hub-card:nth-child(3) { align-self: flex-end; }
+
+/* Back-to-hub link */
+.back-link {
+  display: inline-block;
+  margin: 10px 0;
+}
+
+/* Wraps the old scroll-indicator boxes so they're clickable page links
+   now, without inheriting the generic anchor's frosted-box styling —
+   the box's own look (fun-fact/extra-box/scroll-first) stays untouched. */
+.cta-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  max-width: 100%;
+}
+
+.cta-arrow {
+  animation: nudge-right 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge-right {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-arrow {
+    animation: none;
+  }
+}
+
 @media (max-width: 600px) {
   p, h1, h2, h3, ul, ol, a {
     width: auto;
