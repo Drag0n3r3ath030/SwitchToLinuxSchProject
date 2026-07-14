@@ -11,6 +11,17 @@ console.log(`
 `);
 console.log("Welcome to the Terminal Underground! 🐧");
 
+// If the network can't reach github.com at all (some school/work filters
+// block it outright), the badge image fails to load. Rather than showing
+// a broken-image icon, just hide that one badge — deploy-time already
+// degrades gracefully on its own with fallback text.
+const badgeImg = document.querySelector(".corner-badge img");
+if (badgeImg) {
+  badgeImg.addEventListener("error", () => {
+    badgeImg.closest(".corner-badge")?.style.setProperty("display", "none");
+  });
+}
+
 const REPO_OWNER = "Pizzafliper030";
 const REPO_NAME = "SwitchToLinuxSchProject";
 const GH_API_HEADERS = {
