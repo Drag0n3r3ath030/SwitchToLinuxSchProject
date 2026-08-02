@@ -388,6 +388,11 @@ ol {
   all: revert;
 }
 
+.kao-banner {
+  position: relative;
+  z-index: 10000;
+}
+
 /* Scroll reveal */
 .reveal {
   opacity: 0;
