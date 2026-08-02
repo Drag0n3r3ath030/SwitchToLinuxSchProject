@@ -13,7 +13,7 @@ html {
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
-  padding: 0 16px;
+  padding: 0 16px 70px 16px;
   background-color: var(--bg-dark);
 }
 
@@ -378,6 +378,16 @@ ol {
   }
 }
 
+/* Third-party banner (keepandroidopen.org) uses bare <div>/<a> tags with
+   its own injected stylesheet. Our global a/p/etc. styling above is meant
+   for our own content and otherwise bleeds into any foreign widget's
+   markup too, since it targets tags rather than our own classes. Reset it
+   here so the banner's own CSS can render as intended. */
+.kao-banner,
+.kao-banner a {
+  all: revert;
+}
+
 /* Scroll reveal */
 .reveal {
   opacity: 0;
@@ -388,6 +398,19 @@ ol {
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+}
+
+footer ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 8px 14px;
+  font-size: 13px;
+  margin: 14px 0;
+}
+
+footer li {
+  padding: 2px 0;
 }
 
 @media (max-width: 600px) {
