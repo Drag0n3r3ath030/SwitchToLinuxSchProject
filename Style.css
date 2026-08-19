@@ -38,7 +38,7 @@ p, h1, h2, h3, ul, ol, a {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   width: fit-content;
   max-width: 100%;
@@ -54,6 +54,7 @@ a {
   padding: 3px 10px;
   display: inline-block;
   vertical-align: middle;
+  border-radius: 8px;
   color: #7fd1ff;
   text-decoration: underline;
   transition: color 0.2s var(--smooth-ease);
@@ -129,7 +130,7 @@ ol {
 .distro-card {
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
+  border-radius: 10px 2px 10px 2px;
   padding: 16px 18px;
   min-width: 220px;
   flex: 1 1 220px;
@@ -206,7 +207,7 @@ ol {
 
 .scroll-first, .fun-fact, .extra-box {
   padding: 10px 16px;
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 14px;
   font-weight: bold;
   border: 2px solid #333;
