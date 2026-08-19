@@ -59,22 +59,15 @@ p, h1, h2, h3 {
 }
 
 a {
-  padding: 3px 10px;
-  display: inline-block;
-  vertical-align: middle;
-  border-radius: 8px;
-  background-color: rgba(20, 20, 20, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #7fd1ff;
+  color: #6cb4f5;
   text-decoration: underline;
-  text-shadow: none;
-  transition: color 0.2s var(--smooth-ease), background-color 0.2s var(--smooth-ease);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  transition: color 0.2s var(--smooth-ease);
 }
 
 a:hover,
 a:focus-visible {
-  color: #b3e6ff;
-  background-color: rgba(30, 30, 30, 0.9);
+  color: #a3d1ff;
 }
 
 li {
@@ -102,14 +95,14 @@ h1 {
   margin: 20px auto;
   z-index: 2;
   font-weight: 600;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
   font-size: clamp(24px, 3vw + 12px, 38px);
 }
 
 /* subheadings */
 h2 {
   font-weight: 600;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 8px;
 }
